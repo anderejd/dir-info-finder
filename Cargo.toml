@@ -1,0 +1,10 @@
+[package]
+authors = ["anderejd <rajder@gmail.com>"]
+name = "dir-info-finder"
+version = "0.1.0"
+
+[dependencies]
+chrono = "0.4.2"
+log = "0.4.1"
+stderrlog = "0.3.0"
+walkdir = "2.1.4"
