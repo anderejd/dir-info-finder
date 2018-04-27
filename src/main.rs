@@ -1,13 +1,14 @@
 //!
 //! Lists the modified time for the file with the latest modified time in each
-//! subdirectory. 
+//! subdirectory.
 //!
 #![deny(warnings)]
 
-extern crate walkdir;
-extern crate stderrlog;
 extern crate chrono;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
+extern crate stderrlog;
+extern crate walkdir;
 use chrono::DateTime;
 use chrono::Utc;
 use std::env;
@@ -49,9 +50,6 @@ fn process_root(root: &Path, out: &Path) -> io::Result<()> {
                 Some(old) => Some(old.max(new_modified)),
                 None => Some(new_modified),
             };
-
-            // Panic on overflow, this should not be possible without a programming error or file
-            // system corruption.
             dir_bytes = dir_bytes.checked_add(meta.len()).unwrap();
             total_files += 1;
         }
