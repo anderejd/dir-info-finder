@@ -1,17 +1,13 @@
-/*!
-  Finds latest modified time for all files in each subdirectory.
-*/
+//!
+//! Lists the modified time for the file with the latest modified time in each
+//! subdirectory. 
+//!
 #![deny(warnings)]
 
 extern crate walkdir;
-
 extern crate stderrlog;
-
 extern crate chrono;
-
-#[macro_use]
-extern crate log;
-
+#[macro_use] extern crate log;
 use chrono::DateTime;
 use chrono::Utc;
 use std::env;
@@ -20,33 +16,9 @@ use std::time::SystemTime;
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
-//use std::io::Read;
 use std::io;
 use std::path::Path;
-//use walkdir::DirEntry;
 use walkdir::WalkDir;
-
-//#[derive(Debug)]
-//enum Error {
-//    Io(io::Error),
-//    WalkDir(walkdir::Error),
-//}
-
-/// Allocates memory for and collects all successfull hashes before sorting and
-/// then printing. Errors are printed immediately.
-// fn do_sorted_output(res: ResultIter) {
-//     let mut tuples = vec![];
-//     for r in res {
-//         match r {
-//             Ok(t) => tuples.push(t),
-//             Err(e) => error!("{:?}", e)
-//         }
-//     }
-//     tuples.sort_by(|a, b| a.1.cmp(&b.1));
-//     for t in tuples {
-//         print_success(&t);
-//     }
-// }
 
 fn process_root(root: &Path, out: &Path) -> io::Result<()> {
     let outfile = File::create(out)?;
