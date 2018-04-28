@@ -22,6 +22,7 @@ use std::path::Path;
 use walkdir::WalkDir;
 
 fn process_root(root: &Path, out: &Path) -> io::Result<()> {
+    info!("Scanning root directory: {}", root.display());
     let entries = fs::read_dir(root)?;
     let mut total_gb = 0f64;
     let mut total_files = 0u64;
@@ -95,7 +96,6 @@ fn main() {
         .nth(2)
         .expect("Missing output file path as argument 2");
     let outpath = Path::new(outpath.as_str());
-    info!("Scanning root directory: {}", root.display());
     let result = process_root(root, outpath);
     match result {
         Ok(()) => (),
