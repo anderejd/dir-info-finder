@@ -26,7 +26,7 @@ fn process_root(root: &Path, out: &Path) -> io::Result<()> {
     let mut total_gb = 0f64;
     let mut total_files = 0u64;
     let mut total_bytes = 0u64;
-    let mut tuples = vec!();
+    let mut tuples = vec![];
     for r in entries {
         let ent = r?;
         if !ent.file_type()?.is_dir() {
@@ -66,8 +66,8 @@ fn process_root(root: &Path, out: &Path) -> io::Result<()> {
                 let dt: DateTime<Utc> = system_time.into();
                 let iso_8601 = "%Y-%m-%dT%H:%M:%S%:z";
                 dt.format(iso_8601).to_string()
-            },
-            None => "                   ".into()
+            }
+            None => "                   ".into(),
         };
         writeln!(
             &mut outbuf,
