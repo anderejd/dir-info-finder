@@ -68,7 +68,7 @@ fn process_root(root: &Path, out: &Path) -> io::Result<()> {
                 let iso_8601 = "%Y-%m-%dT%H:%M:%S%:z";
                 dt.format(iso_8601).to_string()
             }
-            None => "                   ".into(),
+            None => "                         ".into(),
         };
         writeln!(
             &mut outbuf,
