@@ -22,13 +22,11 @@ use std::path::Path;
 use walkdir::WalkDir;
 
 fn process_root(root: &Path, out: &Path) -> io::Result<()> {
-    let outfile = File::create(out)?;
-    let mut outbuf = BufWriter::new(outfile);
     let entries = fs::read_dir(root)?;
     let mut total_gb = 0f64;
     let mut total_files = 0u64;
     let mut total_bytes = 0u64;
-    writeln!(&mut outbuf, "Directory, Modified time, Total size (GB)")?;
+    let mut tuples = vec!();
     for r in entries {
         let ent = r?;
         if !ent.file_type()?.is_dir() {
@@ -53,27 +51,35 @@ fn process_root(root: &Path, out: &Path) -> io::Result<()> {
             dir_bytes = dir_bytes.checked_add(meta.len()).unwrap();
             total_files += 1;
         }
-        let modified_string = match modified_max {
-            Some(system_time) => {
-                let dt: DateTime<Utc> = system_time.into();
-                format!("{}", dt)
-            }
-            None => String::new(),
-        };
         let dir_gb = dir_bytes as f64 / 1024f64 / 1024f64 / 1024f64;
-        writeln!(
-            &mut outbuf,
-            "{}, {}, {}",
-            ent.path().display(),
-            modified_string,
-            dir_gb
-        )?;
+        tuples.push((modified_max, ent.path(), dir_gb));
         total_gb += dir_gb;
         total_bytes = total_bytes.checked_add(dir_bytes).unwrap();
     }
-    info!("Total GB: {}", total_gb);
-    info!("Total bytes: {}", total_bytes);
+    let outfile = File::create(out)?;
+    let mut outbuf = BufWriter::new(outfile);
+    writeln!(&mut outbuf, "Modified time, Directory, Total size (GB)")?;
+    tuples.sort_by(|a, b| a.0.cmp(&b.0));
+    for t in tuples {
+        let modified_string = match t.0 {
+            Some(system_time) => {
+                let dt: DateTime<Utc> = system_time.into();
+                let iso_8601 = "%Y-%m-%dT%H:%M:%S%:z";
+                dt.format(iso_8601).to_string()
+            },
+            None => "                   ".into()
+        };
+        writeln!(
+            &mut outbuf,
+            "{}, {}, {}",
+            modified_string,
+            t.1.display(),
+            t.2
+        )?;
+    }
     info!("Total files: {}", total_files);
+    info!("Total bytes: {}", total_bytes);
+    info!("Total GB:    {}", total_gb);
     Ok(())
 }
 
